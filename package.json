@@ -1,0 +1,23 @@
+{
+  "name": "ann-dota",
+  "version": "0.0.0",
+  "description": "ANN in dota 2 pick",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ANN",
+    "Dota 2",
+    "Synaptic",
+    "Neron Network"
+  ],
+  "author": "Loutchansky Oleg",
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^9.6.0",
+    "request": "^2.75.0",
+    "synaptic": "^1.0.8"
+  }
+}
