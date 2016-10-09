@@ -16,6 +16,7 @@
   "author": "Loutchansky Oleg",
   "license": "MIT",
   "dependencies": {
+    "dota2-api": "^0.2.1",
     "jsdom": "^9.6.0",
     "request": "^2.75.0",
     "synaptic": "^1.0.8"
