@@ -5,7 +5,8 @@ const Neuron = synaptic.Neuron,
     Trainer = synaptic.Trainer,
     Architect = synaptic.Architect
 
-const data = require('./heroes.json')
+const heroes = require('./prepare-heroes.json')
+const trainingSet = require('./training-data.json')
 
 let network = new Architect.Perceptron(117, 117, 117)
 let trainer = new Trainer(network)
@@ -19,24 +20,14 @@ trainer.train(data, {
 })
 
 let hero = getByName('Sand King')
-console.log(hero.name)
-console.log(hero.counter)
-let result = network.activate(hero.input)
-// console.log(result)
-console.log(findInCatalog(result.map(Math.round)).name)
+let hero2 = getByName('Abaddon')
 
-function findInCatalog(rowData) {
-  for (let hero of data) {
-    let counter = 0;
-    for (let i = 0; i < 117; i++) {
-      if (hero.input[i] === rowData[i]) counter++
-    }
-    if (counter === 117) return hero
-  }
-}
+const input = hero.concat(hero2)
+let result = network.activate(hero.input)
+console.log(result)
 
 function getByName(name) {
-  for (let hero of data) {
+  for (let hero of heroes) {
     if (hero.name === name) return hero
   }
 }
