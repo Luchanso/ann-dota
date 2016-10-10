@@ -1,4 +1,6 @@
 const synaptic = require('synaptic')
+const fs = require('fs')
+
 const Neuron = synaptic.Neuron,
     Layer = synaptic.Layer,
     Network = synaptic.Network,
@@ -8,23 +10,44 @@ const Neuron = synaptic.Neuron,
 const heroes = require('./prepare-heroes.json')
 const trainingSet = require('./training-data.json')
 
-let network = new Architect.Perceptron(117, 117, 117)
+let networkImport
+
+try {
+  networkImport = fs.readFileSync('network.ann')
+}
+catch (err) { }
+
+let network = new Architect.Perceptron(heroes.length * 2, heroes.length, 1)
 let trainer = new Trainer(network)
-let rate = 0.9
+// let rate = 0.09
 
-trainer.train(data, {
-  iterations: 30000,
-  log: 1,
-  error: 0.1
-  // rate
-})
+let startTrainingTime = Date.now()
 
-let hero = getByName('Sand King')
-let hero2 = getByName('Abaddon')
+if (networkImport) {
+  network.fromJson(JSON.parse(networkImport))
+} else {
+  trainer.train(trainingSet, {
+    log: 1,
+    iterations: 5,
+    shuffle: true
+    // error: 0.1,
+    // rate: rate
+  })
+}
 
-const input = hero.concat(hero2)
-let result = network.activate(hero.input)
-console.log(result)
+console.log('Training time:', Date.now() - startTrainingTime, 'ms.')
+
+fs.writeFileSync('network.ann', JSON.stringify(network.toJSON()))
+
+let counter = 0
+for (let i = 0; i < trainingSet.length; i++) {
+  let result = network.activate(trainingSet[i].input)
+  if (Math.round(result[0]) === trainingSet[i].output[0]) counter++
+  console.log(result, trainingSet[i].output, Math.round(result[0]) === trainingSet[i].output[0])
+  fs.appendFile('result.json', JSON.stringify(result) + '\r\n')
+}
+
+console.log(counter / trainingSet.length * 100, '%')
 
 function getByName(name) {
   for (let hero of heroes) {
