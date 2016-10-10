@@ -14,7 +14,7 @@ getMatches()
   .then(createTrainingData)
   .then((data) => {
     // console.log(data)
-    fs.appendFile('training-data.json', JSON.stringify(data))
+    fs.writeFile('training-data.json', JSON.stringify(data))
   })
   .catch(console.log)
 
@@ -73,7 +73,11 @@ function createTrainingData(data) {
     let summaryData = []
     for (let match of data) {
       console.log('match_id', match.result.match_id)
-      let trainingData = convertToTrainingData(match.result.players, match.result.radiant_win)
+      let trainingData = convertToTrainingData(
+        match.result.players,
+        match.result.radiant_win,
+        match.result.match_id
+      )
       summaryData = summaryData.concat(trainingData)
     }
 
@@ -81,7 +85,7 @@ function createTrainingData(data) {
   })
 }
 
-function convertToTrainingData(players, radiantIsWin) {
+function convertToTrainingData(players, radiantIsWin, matchId) {
   let dataArray = []
 
   for (let player of players) {
@@ -90,21 +94,24 @@ function convertToTrainingData(players, radiantIsWin) {
       if (player.hero_id === 0 || player2.hero_id === 0) continue
 
       let hero = getHeroById(player.hero_id)
+      let enemy = getHeroById(player2.hero_id)
 
       let data = {
         name: hero.name,
-        input: hero.mask
+        enemy: enemy.name,
+        input: hero.mask,
+        match_id: matchId
       }
 
       if (player.player_slot < 128 && player2.player_slot > 127) {
         data.input = data.input.concat(getHeroById(player2.hero_id).mask)
         data.output = [radiantIsWin ? 1 : 0]
         dataArray.push(data)
-      } else if(player.player_slot > 127 && player2.player_slot < 128) {
-        data.input = data.input.concat(getHeroById(player2.hero_id).mask)
-        data.output = [!radiantIsWin ? 1 : 0]
-        dataArray.push(data)
-      }
+      } // } else if (player.player_slot > 127 && player2.player_slot < 128) {
+      //   data.input = data.input.concat(getHeroById(player2.hero_id).mask)
+      //   data.output = [!radiantIsWin ? 1 : 0]
+      //   dataArray.push(data)
+      // }
     }
   }
 
