@@ -24,7 +24,7 @@ let trainer = new Trainer(network)
 let startTrainingTime = Date.now()
 
 if (networkImport) {
-  network.fromJson(JSON.parse(networkImport))
+  network = Network.fromJSON(JSON.parse(networkImport))
 } else {
   trainer.train(trainingSet, {
     log: 1,
@@ -37,17 +37,23 @@ if (networkImport) {
 
 console.log('Training time:', Date.now() - startTrainingTime, 'ms.')
 
-fs.writeFileSync('network.ann', JSON.stringify(network.toJSON()))
+let hero2 = getByName("Phoenix").mask
+let hero1 = getByName("Pugna").mask
 
-let counter = 0
-for (let i = 0; i < trainingSet.length; i++) {
-  let result = network.activate(trainingSet[i].input)
-  if (Math.round(result[0]) === trainingSet[i].output[0]) counter++
-  console.log(result, trainingSet[i].output, Math.round(result[0]) === trainingSet[i].output[0])
-  fs.appendFile('result.json', JSON.stringify(result) + '\r\n')
-}
+let input = hero1.concat(hero2)
 
-console.log(counter / trainingSet.length * 100, '%')
+console.log(network.activate(input))
+// fs.writeFileSync('network.ann', JSON.stringify(network.toJSON()))
+//
+// let counter = 0
+// for (let i = 0; i < trainingSet.length; i++) {
+//   let result = network.activate(trainingSet[i].input)
+//   if (Math.round(result[0]) === trainingSet[i].output[0]) counter++
+//   console.log(result, trainingSet[i].output, Math.round(result[0]) === trainingSet[i].output[0])
+//   fs.appendFile('result.json', JSON.stringify(result) + '\r\n')
+// }
+//
+// console.log(counter / trainingSet.length * 100, '%')
 
 function getByName(name) {
   for (let hero of heroes) {
